@@ -8,11 +8,14 @@
 #include <cmath>
 #include <map>
 #include <algorithm>
+#include <limits>
+#include <cfloat>
+#include <climits>
 
 class BitcoinExchange
 {
 	private:
-		std::map<int, int>	_prices;
+		std::map<int, float>	_prices;
 
 	public:
 		BitcoinExchange(std::string pricesFile, std::string inputFile);
@@ -22,6 +25,7 @@ class BitcoinExchange
 
 		void	fillPrices(std::string pricesFile);
 		void	useInput(std::string inputFile);
+		float		returnPrice(std::string date);
 
 	class InvalidFileException : public std::exception
 	{

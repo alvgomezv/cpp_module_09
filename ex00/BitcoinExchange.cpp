@@ -1,6 +1,5 @@
 #include"BitcoinExchange.hpp"
-#include <limits>
-#include <cfloat>
+
 
 BitcoinExchange::BitcoinExchange(std::string pricesFile, std::string inputFile)
 {
@@ -70,17 +69,49 @@ void	BitcoinExchange::useInput(std::string inputFile)
 		std::string tmp3;
 		std::getline(ss, word1, '|');
 		std::getline(ss, word2, '|');
-		if (word1.empty())
+		if (word1.empty() || word2.empty())
 		{
 			std::cout << "Error: bad imput => " << line << std::endl;
 			continue;
 		}
-		if (word2.empty())
+		if (std::atoi(word2.c_str()) > INT_MAX || std::atoi(word2.c_str()) <= (INT_MIN + 1))
 		{
-			std::cout << "Error: bad imput => " << line << std::endl;
+			std::cout << "Error: too large a number." << std::endl;
 			continue;
 		}
-		std::cout << word1 << "=>" << word2 << std::endl;
+		if (std::atoi(word2.c_str()) < 0)
+		{
+			std::cout << "Error: not a positive number." << std::endl;
+			continue;
+		}
+		float result = std::atof(word2.c_str()) * this->returnPrice(word1);
+		std::cout << word1 << "=>" << word2 << " = " << result << std::endl;
 	}
+}
+
+float		BitcoinExchange::returnPrice(std::string date)
+{
+	std::stringstream ss(date);
+	std::string tmp1;
+	std::string tmp2;
+	std::string tmp3;
+	std::getline(ss, tmp1, '-');
+	std::getline(ss, tmp2, '-');
+	std::getline(ss, tmp3, '-');
+	date = tmp1 + tmp2 + tmp3;
+	int dateInt = std::atoi(date.c_str());
+	std::map<int, float>::iterator it = _prices.begin();
+	while (it != _prices.end())
+	{
+		if (it->first == dateInt)
+			return it->second;
+		else if (it->first > dateInt)
+		{
+			it--;
+			return it->second;
+		}
+		it++;
+	}
+	return 0;
 }
 
