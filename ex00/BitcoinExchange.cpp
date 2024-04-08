@@ -3,13 +3,19 @@
 
 BitcoinExchange::BitcoinExchange(std::string pricesFile, std::string inputFile)
 {
-	std::ifstream file(pricesFile.c_str());
-	std::ifstream file2(inputFile.c_str());
-	if (!file || !file2)
-		throw InvalidFileException();
-
-	this->fillPrices(pricesFile);
-	this->useInput(inputFile);
+	try
+	{
+		std::ifstream file(pricesFile.c_str());
+		std::ifstream file2(inputFile.c_str());
+		if (file == NULL || file2 == NULL)
+			throw BitcoinExchange::InvalidFileException();
+		this->fillPrices(pricesFile);
+		this->useInput(inputFile);
+	}
+	catch (std::exception &e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
 }
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange& other)
@@ -82,6 +88,21 @@ void	BitcoinExchange::useInput(std::string inputFile)
 		if (std::atoi(word2.c_str()) < 0)
 		{
 			std::cout << "Error: not a positive number." << std::endl;
+			continue;
+		}
+		std::stringstream ss2(word1);
+		std::getline(ss2, tmp1, '-');
+		std::getline(ss2, tmp2, '-');
+		std::getline(ss2, tmp3, '-');
+		if (std::atoi(tmp1.c_str()) <= 0 || std::atoi(tmp2.c_str()) <= 0 || std::atoi(tmp3.c_str()) <= 0
+			|| std::atoi(tmp1.c_str()) > 2050 || std::atoi(tmp2.c_str()) > 12 || std::atoi(tmp3.c_str()) > 31 
+			|| (std::atoi(tmp2.c_str()) == 2 && std::atoi(tmp3.c_str()) > 29) 
+			|| (std::atoi(tmp2.c_str()) == 4 && std::atoi(tmp3.c_str()) > 30) 
+			|| (std::atoi(tmp2.c_str()) == 6 && std::atoi(tmp3.c_str()) > 30) 
+			|| (std::atoi(tmp2.c_str()) == 9 && std::atoi(tmp3.c_str()) > 30) 
+			|| (std::atoi(tmp2.c_str()) == 11 && std::atoi(tmp3.c_str()) > 30))
+		{
+			std::cout << "Error: bad date format => " << word1 << std::endl;
 			continue;
 		}
 		float result = std::atof(word2.c_str()) * this->returnPrice(word1);

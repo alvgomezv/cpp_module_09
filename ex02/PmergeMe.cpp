@@ -55,6 +55,8 @@ void	PmergeMe::fillVector(std::string numbers)
 				i++;
 		}
 	}
+	if (_vector.empty() || _vector.size() < 2)
+		throw PmergeMe::InvalidArgumentException();
 }
 
 void	PmergeMe::fillList(void)
