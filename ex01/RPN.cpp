@@ -1,6 +1,5 @@
 #include"RPN.hpp"
 
-
 RPN::RPN(std::string calc)
 {
 	this->checkNumbers(calc);

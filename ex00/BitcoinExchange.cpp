@@ -43,6 +43,8 @@ void	BitcoinExchange::fillPrices(std::string pricesFile)
 
 	while (std::getline(file, line))
 	{
+		if (line == "date | value")
+			continue;
 		std::stringstream ss1(line);
 		std::string word1;
 		std::string word2;
@@ -56,7 +58,7 @@ void	BitcoinExchange::fillPrices(std::string pricesFile)
 		std::getline(ss2, tmp2, '-');
 		std::getline(ss2, tmp3, '-');
 		word1 = tmp1 + tmp2 + tmp3;
-		_prices[std::atoi(word1.c_str())] = std::atof(word2.c_str());
+		_prices[std::atof(word1.c_str())] = std::atof(word2.c_str());
 	}
 }
 
@@ -67,6 +69,11 @@ void	BitcoinExchange::useInput(std::string inputFile)
 
 	while (std::getline(file, line))
 	{
+		if (line == "date | value")
+		{
+			std::cout << "date | value | result" << std::endl;
+			continue;
+		}
 		std::stringstream ss(line);
 		std::string word1;
 		std::string word2;
@@ -80,12 +87,12 @@ void	BitcoinExchange::useInput(std::string inputFile)
 			std::cout << "Error: bad imput => " << line << std::endl;
 			continue;
 		}
-		if (std::atoi(word2.c_str()) > INT_MAX || std::atoi(word2.c_str()) <= (INT_MIN + 1))
+		if (std::atof(word2.c_str()) > 1000)
 		{
 			std::cout << "Error: too large a number." << std::endl;
 			continue;
 		}
-		if (std::atoi(word2.c_str()) < 0)
+		if (std::atof(word2.c_str()) < 0)
 		{
 			std::cout << "Error: not a positive number." << std::endl;
 			continue;
@@ -94,13 +101,13 @@ void	BitcoinExchange::useInput(std::string inputFile)
 		std::getline(ss2, tmp1, '-');
 		std::getline(ss2, tmp2, '-');
 		std::getline(ss2, tmp3, '-');
-		if (std::atoi(tmp1.c_str()) <= 0 || std::atoi(tmp2.c_str()) <= 0 || std::atoi(tmp3.c_str()) <= 0
-			|| std::atoi(tmp1.c_str()) > 2050 || std::atoi(tmp2.c_str()) > 12 || std::atoi(tmp3.c_str()) > 31 
-			|| (std::atoi(tmp2.c_str()) == 2 && std::atoi(tmp3.c_str()) > 29) 
-			|| (std::atoi(tmp2.c_str()) == 4 && std::atoi(tmp3.c_str()) > 30) 
-			|| (std::atoi(tmp2.c_str()) == 6 && std::atoi(tmp3.c_str()) > 30) 
-			|| (std::atoi(tmp2.c_str()) == 9 && std::atoi(tmp3.c_str()) > 30) 
-			|| (std::atoi(tmp2.c_str()) == 11 && std::atoi(tmp3.c_str()) > 30))
+		if (std::atof(tmp1.c_str()) <= 0 || std::atof(tmp2.c_str()) <= 0 || std::atof(tmp3.c_str()) <= 0
+			|| std::atof(tmp1.c_str()) > 2050 || std::atof(tmp2.c_str()) > 12 || std::atof(tmp3.c_str()) > 31 
+			|| (std::atof(tmp2.c_str()) == 2 && std::atof(tmp3.c_str()) > 29) 
+			|| (std::atof(tmp2.c_str()) == 4 && std::atof(tmp3.c_str()) > 30) 
+			|| (std::atof(tmp2.c_str()) == 6 && std::atof(tmp3.c_str()) > 30) 
+			|| (std::atof(tmp2.c_str()) == 9 && std::atof(tmp3.c_str()) > 30) 
+			|| (std::atof(tmp2.c_str()) == 11 && std::atof(tmp3.c_str()) > 30))
 		{
 			std::cout << "Error: bad date format => " << word1 << std::endl;
 			continue;
@@ -120,7 +127,7 @@ float		BitcoinExchange::returnPrice(std::string date)
 	std::getline(ss, tmp2, '-');
 	std::getline(ss, tmp3, '-');
 	date = tmp1 + tmp2 + tmp3;
-	int dateInt = std::atoi(date.c_str());
+	int dateInt = std::atof(date.c_str());
 	std::map<int, float>::iterator it = _prices.begin();
 	while (it != _prices.end())
 	{

@@ -3,8 +3,6 @@
 PmergeMe::PmergeMe(std::string numbers)
 {
 	this->checkNumbers(numbers);
-	this->fillVector(numbers);
-	this->fillList();
 }
 
 PmergeMe::PmergeMe(const PmergeMe& other)
@@ -59,10 +57,24 @@ void	PmergeMe::fillVector(std::string numbers)
 		throw PmergeMe::InvalidArgumentException();
 }
 
-void	PmergeMe::fillList(void)
+void	PmergeMe::fillList(std::string numbers)
 {
-	for (int i = 0; i < static_cast<int>(_vector.size()) ; i++)
-		_list.push_back(_vector[i]);
+	for (int i = 0; i < static_cast<int>(numbers.size()) ; i++)
+	{
+		if (numbers[i] == ' ')
+			continue;
+		else
+		{
+			long tmp = std::atol(numbers.c_str() + i);
+			if (tmp < 0 || tmp > INT_MAX)
+				throw PmergeMe::InvalidArgumentException();
+			_list.push_back(static_cast<int>(tmp));
+			while (numbers[i] && numbers[i] != ' ')
+				i++;
+		}
+	}
+	if (_list.empty() || _list.size() < 2)
+		throw PmergeMe::InvalidArgumentException();
 }
 
 std::vector<int>	mergeVector(std::vector<int>& left, std::vector<int>& right)
@@ -175,8 +187,18 @@ std::list<int>	MergeSortList(std::list<int> list)
 	return mergeList(left, right);
 }
 
-void	PmergeMe::SortVectorAndList(void)
+void	PmergeMe::FillAndSort(std::string numbers)
 {
+	clock_t startVector = clock();
+	this->fillVector(numbers);
+	std::vector<int> sortedVector = MergeSortVector(_vector);
+	clock_t endVector = clock();
+
+	clock_t startList = clock();
+	this->fillList(numbers);
+	std::list<int> sortedList = MergeSortList(_list);
+	clock_t endList = clock();
+
 	std::cout << "Before: ";
 	int len = static_cast<int>(_vector.size());
 	bool tooLong = false;
@@ -196,9 +218,6 @@ void	PmergeMe::SortVectorAndList(void)
 	std::cout << std::endl;
 
 	std::cout << "After:  ";
-	clock_t start = clock();
-	std::vector<int> sortedVector = MergeSortVector(_vector);
-	clock_t end = clock();
 	for (int i = 0; i < len; i++)
 	{
 		std::cout << sortedVector[i];
@@ -209,13 +228,9 @@ void	PmergeMe::SortVectorAndList(void)
 		std::cout << " [...]";
 	std::cout << std::endl;
 
-	double elapsed_time = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;
+	double elapsed_time = static_cast<double>(endVector - startVector) / CLOCKS_PER_SEC * 1000.0;
 	std::cout << "Time to process a range of " << _vector.size() << " elements with std::vector : " << elapsed_time << " ms" << std::endl;
 
-	start = clock();
-	std::list<int> sortedList = MergeSortList(_list);
-	end = clock();
-
-	elapsed_time = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000.0;
+	elapsed_time = static_cast<double>(endList - startList) / CLOCKS_PER_SEC * 1000.0;
 	std::cout << "Time to process a range of " << _list.size() << " elements with std::list   : " << elapsed_time << " ms" << std::endl;
 }

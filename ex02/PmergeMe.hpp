@@ -25,8 +25,8 @@ class PmergeMe
 
 		void	checkNumbers(std::string numbers);
 		void	fillVector(std::string numbers);
-		void	fillList(void);
-		void	SortVectorAndList(void);
+		void	fillList(std::string numbers);
+		void	FillAndSort(std::string numbers);
 
 	class InvalidArgumentException : public std::exception
 	{
